@@ -1,10 +1,16 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 using namespace std;
 
 int main(){
     string text = "Programmas ir jaraksta cilvekiem, kas tas lasis!";
+    string toDelete;
     char input;
+    int count = 0;
+    int max = 0;
+    bool match = true;
+
     for(;;){
         cout << "1: Ievadīt jaunu tekstu (parastie burti) \n";
         cout << "2: Pasaka vai ievadītā teksta garums ir pāra vai nepāra skaitlis\n";
@@ -12,6 +18,9 @@ int main(){
         cout << "4. Atrod faktoriāli n (kur n = teksta garums) \n";
         cout << "5. Izvada virkni no otrā gala (reversā) \n";
         cout << "6. Beigt darbību \n";
+        cout << "7. Izvada garāko vādu uz ekrāna\n";
+        cout << "8. Katra vārda pēdējo burtu pārvērš par lielo\n";
+        cout << "9. Izdzēš no virknes ievadīto vārdu\n";
 
         cin >> input;
 
@@ -47,6 +56,55 @@ int main(){
             continue;
         case '6':
             break;
+        case '7':
+            for(int i = 0; i < text.length(); i++){
+                if(text[i] == ' '){
+                    if(count > max){
+                        max = count;
+                    }
+                    count = 0;
+                } else {
+                    cout << text[i];
+                    count++;
+                }
+            }
+            if(count > max){
+                        max = count;
+                        count = 0;
+                    }
+            count = 0;
+            for(int i = 0; i < text.length(); i++){
+                if(text[i] == ' '){
+                    if(count == max){
+                        for(int j = max; j > 0; j--){
+                            cout << text[i - j];
+                        }
+                        cout << endl;
+                    }
+                    count = 0;
+                } else {
+                    count++;
+                }
+            }
+            continue;
+        case '8':
+            for(int i = 0; i < text.length(); i++){
+                if(text[i] == ' '){
+                    if(int(text[i - 1] > 96 && int(text[i - 1] < 123))){
+                        text[i - 1] = char(int(text[i - 1]) - 32);
+                    }
+                }
+            }
+            cout << text << endl;
+            continue;
+        case '9':
+            cin >> toDelete;
+            while(text.find(toDelete) != string::npos){
+                text.replace(text.find(toDelete),toDelete.length(),"");
+            }
+            
+            cout << text << endl;
+
         default:
             cout << "Nepraeiza opcija, mēģini vēlreiz" << endl;
             continue;
