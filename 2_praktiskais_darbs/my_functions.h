@@ -10,6 +10,7 @@ using namespace std;
 void addNum(vector<int> &vect) {
     string text = "";
     string num = "";
+    vect.clear();
     cin.ignore();
     getline(cin, text);
     
@@ -17,7 +18,7 @@ void addNum(vector<int> &vect) {
         if (int(text[i]) > 47 && int(text[i]) < 58) {
             num += text[i];
         } else if (num != "") {
-            vect.push_back(stoi(num));
+            vect.emplace_back(stoi(num));
             num = "";
         }
     }
