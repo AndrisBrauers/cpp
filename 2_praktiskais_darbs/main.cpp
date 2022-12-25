@@ -1,14 +1,14 @@
 #include "my_functions.h"
 
 enum menu {
-            Insert = '1', 
-            Queue = '2', 
-            Stack = '3',
-            Two_Stacks = '4',
-            Map = '5',
-            Print_Vector = '6',
-            Exit = '7'
-          };
+    Insert = '1', 
+    Queue = '2', 
+    Stack = '3',
+    Two_Stacks = '4',
+    Map = '5',
+    Print_Vector = '6',
+    Exit = '7'
+};
 
 int main() {
     char input;
