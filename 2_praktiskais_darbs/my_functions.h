@@ -22,11 +22,11 @@ void addNum(vector<int> &vect) {
         }
     }
     if (num != "") {
-        vect.push_back(stoi(num));
+        vect.emplace_back(stoi(num));
     }
 }
 
-void queuePrint(vector<int> &vect) {
+void queuePrint(const vector<int> &vect) {
     queue<int> q_numbers;
     for (auto i = vect.begin(); i != vect.end(); ++i) {
         q_numbers.push(*i);
@@ -38,7 +38,7 @@ void queuePrint(vector<int> &vect) {
     }
 }
 
-void stackPrint(vector<int> &vect) {
+void stackPrint(const vector<int> &vect) {
     stack<int> s_numbers;
     for (auto i = vect.begin(); i != vect.end(); ++i) {
         s_numbers.push(*i);
@@ -50,7 +50,7 @@ void stackPrint(vector<int> &vect) {
     }
 }
 
-void twoStackPrint(vector<int> &vect) {
+void twoStackPrint(const vector<int> &vect) {
     stack<int> s1_numbers;
     stack<int> s2_numbers;
     for (auto i = vect.begin(); i != vect.end(); ++i) {
@@ -68,7 +68,7 @@ void twoStackPrint(vector<int> &vect) {
     }
 }
 
-void mapPrint(vector<int> &vect) {
+void mapPrint(const vector<int> &vect) {
     map<int, int> m_numbers;
     for (int i = 0; i != vect.size(); i++) {
         m_numbers.insert(pair<int, int>(i, vect[i]));
@@ -78,7 +78,7 @@ void mapPrint(vector<int> &vect) {
     }
 }
 
-void printVector(vector<int> &vect) {
+void printVector(const vector<int> &vect) {
     for (auto i = vect.begin(); i != vect.end(); ++i) {
         cout << *i << " ";
     }
