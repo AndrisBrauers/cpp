@@ -113,7 +113,6 @@ void setPrint(const vector<int> &vect) {
 }
 
 void mapExtraPrint(map<int, string> &numMap) {  
-
     int numKey;
     cout << "Ievadi skaitli kuru atrast: ";
     cin >> numKey;
