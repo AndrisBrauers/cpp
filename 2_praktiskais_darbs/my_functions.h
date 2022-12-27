@@ -4,10 +4,33 @@
 #include <queue>
 #include <stack>
 #include <map>
+#include <set>
+#include <algorithm>
 
 using namespace std;
 
-void addNum(vector<int> &vect) {
+void makeMap(const vector<int> &vect, map<int, string> &numMap) {
+    string numName;
+    vector<int> toErase;
+
+    for (int i = 0; i != vect.size(); i++) {
+        if (numMap.count(vect[i]) == 0) {
+            cout << "Ievadi skaitli " << vect[i] << " ar vārdiem\n";
+            cin >> numName;
+            numMap.insert(pair<int, string>(vect[i], numName));
+        }
+    }
+    for (auto const &tupl: numMap) {
+        if (find(vect.begin(), vect.end(), tupl.first) == vect.end()) {
+            toErase.emplace_back(tupl.first);
+        }
+    }
+    for (int i = 0; i != toErase.size(); i++) {
+        numMap.erase(toErase[i]);
+    }
+}
+
+void addNum(vector<int> &vect, map<int, string> &m_numbers) {
     string text = "";
     string num = "";
     vect.clear();
@@ -25,6 +48,8 @@ void addNum(vector<int> &vect) {
     if (num != "") {
         vect.emplace_back(stoi(num));
     }
+
+    makeMap(vect, m_numbers);
 }
 
 void queuePrint(const vector<int> &vect) {
@@ -70,12 +95,55 @@ void twoStackPrint(const vector<int> &vect) {
 }
 
 void mapPrint(const vector<int> &vect) {
-    map<int, int> m_numbers;
+    map<int, int> numMap;
     for (int i = 0; i != vect.size(); i++) {
-        m_numbers.insert(pair<int, int>(i, vect[i]));
+        numMap.insert(pair<int, int>(i, vect[i]));
     }
-    for (auto const &tupl: m_numbers) {
+    for (auto const &tupl: numMap) {
         cout << tupl.first << " : " << tupl.second << endl;
+    }
+}
+
+void setPrint(const vector<int> &vect) {
+    set<int> s_numbers;
+    for (auto i = vect.begin(); i != vect.end(); ++i) {
+        s_numbers.insert(*i);
+    }
+    for (auto i = s_numbers.begin(); i != s_numbers.end(); i++) {
+        cout << *i << " ";
+    }
+}
+
+void mapExtraPrint(map<int, string> &numMap) {  
+    int numKey;
+    cout << "Ievadi skaitli kuru atrast: ";
+    cin >> numKey;
+    cin.clear();
+    
+    if (numMap.count(numKey) != 0) {
+        cout << numMap[numKey] << endl;
+    } else {
+        cout << "Skaitlis nav atrasts\n";
+    }
+}
+
+void multimapFind(const vector<int> &vect) {
+    multimap <string, int> grades;
+    string name;
+
+    for (auto i = vect.begin(); i != vect.end(); ++i) {
+        cout << "Ievadi kuram ir atzīme " << *i << endl;
+        cin >> name;
+        grades.insert(pair<string, int>(name, *i));
+    }
+
+    cout << "Kura studenta atzīmes atrast: ";
+    cin >> name;
+
+    for (auto const &tupl: grades) {
+        if (tupl.first == name) {
+            cout << tupl.second << " ";
+        }
     }
 }
 
