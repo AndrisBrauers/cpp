@@ -18,8 +18,6 @@ int main() {
     vector<int> v_numbers {4, 5, 6, 7, 8};
     map<int, string> m_numbers;
 
-    makeMap(v_numbers, m_numbers);
-
     while (true) {
         cout << "1: Ievadīt skaitļus\n";
         cout << "2: Rinda\n";
@@ -36,7 +34,7 @@ int main() {
 
         switch (input) {
             case Insert:
-                addNum(v_numbers, m_numbers);
+                addNum(v_numbers);
                 cout << endl;
                 continue;
             case Queue:
@@ -67,6 +65,7 @@ int main() {
                 cout << endl;
                 continue;
             case Map_Extra:
+                makeMap(v_numbers, m_numbers);
                 mapExtraPrint(m_numbers);
                 cout << endl;
                 continue;

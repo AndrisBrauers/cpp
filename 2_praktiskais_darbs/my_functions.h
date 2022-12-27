@@ -30,7 +30,7 @@ void makeMap(const vector<int> &vect, map<int, string> &numMap) {
     }
 }
 
-void addNum(vector<int> &vect, map<int, string> &m_numbers) {
+void addNum(vector<int> &vect) {
     string text = "";
     string num = "";
     vect.clear();
@@ -48,8 +48,6 @@ void addNum(vector<int> &vect, map<int, string> &m_numbers) {
     if (num != "") {
         vect.emplace_back(stoi(num));
     }
-
-    makeMap(vect, m_numbers);
 }
 
 void queuePrint(const vector<int> &vect) {
@@ -115,6 +113,7 @@ void setPrint(const vector<int> &vect) {
 }
 
 void mapExtraPrint(map<int, string> &numMap) {  
+
     int numKey;
     cout << "Ievadi skaitli kuru atrast: ";
     cin >> numKey;
