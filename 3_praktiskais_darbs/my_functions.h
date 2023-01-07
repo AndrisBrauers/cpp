@@ -2,6 +2,7 @@
 #include <string.h>
 #include <fstream>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -22,35 +23,15 @@ void print(const Product *pr) {
 }
 
 bool compareBySold(const Product &a, const Product &b) {
-    return a.sold < b.sold;
+    return a.sold > b.sold;
 }
 
 bool compareByProfit(const Product &a, const Product &b) {
-    return a.sold * a.price < b.sold * b.price;
+    return a.sold * a.price > b.sold * b.price;
 }
 
 bool compareByPrice(const Product &a, const Product &b) {
-    return a.price < b.price;
-}
-
-int fillTop3(Product *top, const string file) {
-    int length = 0;
-    fstream f;
-    f.open(file, ios::in |ios::binary);
-
-    if (f.is_open()) {
-        f.seekg (0, ios::end);
-        length = f.tellg();
-        f.seekg (0, ios::beg);
-
-        for (int i = 0; i < length / sizeof(Product) && i < 3; i++) {
-            f.read(reinterpret_cast<char *>(&top[i]), sizeof(Product));
-        }
-    } else {
-        cout << "ERROR\n";
-    }
-    f.close();
-    return length;
+    return a.price > b.price;
 }
 
 int findProduct(fstream &f, const char *name) {
@@ -102,8 +83,7 @@ void addProduct(const string file) {
             cin >> prod.price;
             cout << productName << " - Pieejamais daudzums: ";
             cin >> prod.available;
-            cout << productName << " - Pārdotais daudzums: ";
-            cin >> prod.sold;
+            prod.sold = 0;
 
             shopFile.seekp(0, ios::end);
             shopFile.write(reinterpret_cast<char *>(&prod), sizeof(Product));
@@ -195,45 +175,27 @@ void printProduct(const string file) {
 }
 
 void top3Sold(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareBySold);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
     if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.sold > top3[0].sold) {
-                if (prod.sold > top3[1].sold) {
-                    if (prod.sold > top3[2].sold) {
-                        top3[0] = top3[1];
-                        top3[1] = top3[2];
-                        top3[2] = prod; 
-                    } else {
-                        top3[0] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[0] = prod;
-                }
-            }
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareBySold);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[i]);
         }
-        
+
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
@@ -241,45 +203,28 @@ void top3Sold(const string file) {
 }
 
 void least3Sold(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareBySold);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
-    if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.sold < top3[2].sold) {
-                if (prod.sold < top3[1].sold) {
-                    if (prod.sold < top3[0].sold) {
-                        top3[2] = top3[1];
-                        top3[1] = top3[0];
-                        top3[0] = prod; 
-                    } else {
-                        top3[2] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[2] = prod;
-                }
-            }
+    if (shopFile.is_open()) {
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
+
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareBySold);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[length - i - 1]);
         }
         
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
@@ -287,45 +232,27 @@ void least3Sold(const string file) {
 }
 
 void top3Profitable(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareByProfit);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
     if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.sold * prod.price > top3[0].sold * top3[0].price) {
-                if (prod.sold * prod.price > top3[1].sold * top3[1].price) {
-                    if (prod.sold * prod.price > top3[2].sold * top3[2].price) {
-                        top3[0] = top3[1];
-                        top3[1] = top3[2];
-                        top3[2] = prod; 
-                    } else {
-                        top3[0] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[0] = prod;
-                }
-            }
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareByProfit);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[i]);
         }
-        
+
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
@@ -333,45 +260,27 @@ void top3Profitable(const string file) {
 }
 
 void least3Profitable(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareByProfit);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
     if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.sold * prod.price < top3[2].sold * top3[2].price) {
-                if (prod.sold * prod.price < top3[1].sold * top3[1].price) {
-                    if (prod.sold * prod.price < top3[0].sold * top3[0].price) {
-                        top3[2] = top3[1];
-                        top3[1] = top3[0];
-                        top3[0] = prod; 
-                    } else {
-                        top3[2] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[2] = prod;
-                }
-            }
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareByProfit);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[length - i - 1]);
         }
-        
+
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
@@ -379,45 +288,27 @@ void least3Profitable(const string file) {
 }
 
 void top3Expensive(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareByPrice);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
     if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.price > top3[0].price) {
-                if (prod.price > top3[1].price) {
-                    if (prod.price > top3[2].price) {
-                        top3[0] = top3[1];
-                        top3[1] = top3[2];
-                        top3[2] = prod; 
-                    } else {
-                        top3[0] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[0] = prod;
-                }
-            }
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareByPrice);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[i]);
         }
-        
+
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
@@ -425,45 +316,27 @@ void top3Expensive(const string file) {
 }
 
 void least3Expensive(const string file) {
-    Product top3[3];
-    int length = fillTop3(top3, file);
-    sort(top3, top3 + (sizeof(top3) / sizeof(Product)), &compareByPrice);
-
-    if (length / sizeof(Product) <= 3) {
-        for (int i = 0; i < length / sizeof(Product); i++) {
-            print(&top3[i]);
-        }
-        return;
-    }
-    
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);
 
     if (shopFile.is_open()) {
-        Product prod;
-        shopFile.seekg(sizeof(Product) * 3, ios::beg);
+        shopFile.seekg (0, ios::end);
+        int length = shopFile.tellg() / sizeof(Product);
+        shopFile.seekg (0, ios::beg);
 
-        for (int i = 3; i < length / sizeof(Product); i++) {
-            shopFile.read(reinterpret_cast<char *>(&prod), sizeof(Product));
-            if (prod.price < top3[2].price) {
-                if (prod.price < top3[1].price) {
-                    if (prod.price < top3[0].price) {
-                        top3[2] = top3[1];
-                        top3[1] = top3[0];
-                        top3[0] = prod; 
-                    } else {
-                        top3[2] = top3[1];
-                        top3[1] = prod; 
-                    }
-                } else {
-                    top3[2] = prod;
-                }
-            }
+        Product *prod = new Product[length];
+
+        for (int i = 0; i < length; i++) {
+            shopFile.read(reinterpret_cast<char *>(&prod[i]), sizeof(Product));
         }
-        for (int i = 0; i < 3; i++) {
-            print(&top3[i]);
+
+        sort(prod, prod + length, &compareByPrice);
+
+        for (int i = 0; i < 3 && i < length; i++) {
+            print(&prod[length - i - 1]);
         }
-        
+
+        delete[] prod;
     } else {
         cout << "ERROR\n";
     }
