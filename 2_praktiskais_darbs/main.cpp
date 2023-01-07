@@ -1,6 +1,6 @@
 #include "my_functions.h"
 
-enum menu {
+enum eMenu {
     Insert = '1', 
     Queue = '2', 
     Stack = '3',
