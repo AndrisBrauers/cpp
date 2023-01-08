@@ -2,7 +2,6 @@
 #include <string.h>
 #include <fstream>
 #include <algorithm>
-#include <vector>
 
 using namespace std;
 
@@ -15,40 +14,40 @@ struct Product{
     int sold;
 };
 
-void print(const Product *pr) {
-    cout << "\nProdukta nosaukums: " << pr->name << endl;
-    cout << "Produkta cena: " << pr->price << endl;
-    cout << "Produkta pieejamais daudzums: " << pr->available << endl;
-    cout << "Produkta pārdotais daudzums: " << pr->sold << endl << endl;
+void print(const Product *prod) {
+    cout << "\nProdukta nosaukums: " << prod->name << endl;
+    cout << "Produkta cena: " << prod->price << endl;
+    cout << "Produkta pieejamais daudzums: " << prod->available << endl;
+    cout << "Produkta pārdotais daudzums: " << prod->sold << endl << endl;
 }
 
-bool compareBySold(const Product &a, const Product &b) {
-    return a.sold > b.sold;
+bool compareBySold(const Product &prodA, const Product &prodB) {
+    return prodA.sold > prodB.sold;
 }
 
-bool compareByProfit(const Product &a, const Product &b) {
-    return a.sold * a.price > b.sold * b.price;
+bool compareByProfit(const Product &prodA, const Product &prodB) {
+    return prodA.sold * prodA.price > prodB.sold * prodB.price;
 }
 
-bool compareByPrice(const Product &a, const Product &b) {
-    return a.price > b.price;
+bool compareByPrice(const Product &prodA, const Product &prodB) {
+    return prodA.price > prodB.price;
 }
 
-int findProduct(fstream &f, const char *name) {
+int findProduct(fstream &file, const char *name) {
     char buffer[PRODUCT_NAME_L];
     int retVal = -1;
 
-    f.seekg (0, ios::end);
-    int length = f.tellg();
-    f.seekg (0, ios::beg);
+    file.seekg (0, ios::end);
+    int length = file.tellg();
+    file.seekg (0, ios::beg);
 
     for (int i = 0; i < length; i += sizeof(Product)) {
-        f.read(buffer, PRODUCT_NAME_L);
+        file.read(buffer, PRODUCT_NAME_L);
         if (!strcmp(name, buffer)) {
-            retVal = f.tellg();
+            retVal = file.tellg();
             break;
         } else {
-            f.seekg(sizeof(float) + sizeof(int) * 2, ios::cur);
+            file.seekg(sizeof(float) + sizeof(int) * 2, ios::cur);
         }
     }
     return retVal;
@@ -59,6 +58,11 @@ void addProduct(const string file) {
     cout << "Kuru produktu papildināt: ";
     cin.ignore();
     cin.get(productName, PRODUCT_NAME_L);
+    if (cin.fail()) {
+        cout << "Netika ievadits produkta nosaukums\n";
+        cin.clear();
+        return;
+    }
 
     fstream shopFile;
     shopFile.open(file, ios::out | ios::in |ios::binary | ios::ate);
@@ -120,6 +124,11 @@ void sellProduct(const string file) {
     cout << "Kuru produktu pārdot: ";
     cin.ignore();
     cin.get(productName, PRODUCT_NAME_L);
+    if (cin.fail()) {
+        cout << "Netika ievadits produkta nosaukums\n";
+        cin.clear();
+        return;
+    }
 
     fstream shopFile;
     shopFile.open(file, ios::out | ios::in |ios::binary);
@@ -157,6 +166,11 @@ void printProduct(const string file) {
     cout << "Kura produkta datus izvadit: ";
     cin.ignore();
     cin.get(productName, PRODUCT_NAME_L);
+    if (cin.fail()) {
+        cout << "Netika ievadits produkta nosaukums\n";
+        cin.clear();
+        return;
+    }
 
     fstream shopFile;
     shopFile.open(file, ios::in |ios::binary);

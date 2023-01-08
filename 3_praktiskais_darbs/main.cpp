@@ -18,16 +18,14 @@ enum eMenu {
 };
 
 int main() {
-    
-    ifstream f;
-    f.open(FILE_NAME);
-    if (!f.is_open()) {
+    ifstream file;
+    file.open(FILE_NAME);
+    if (!file.is_open()) {
         ofstream file;
         file.open(FILE_NAME);
         file.close();
     }
-    f.close();
-    
+    file.close();
 
     int input;
 
@@ -80,7 +78,7 @@ int main() {
             case End:
                 break;
             default:
-                cout << "Nepraeiza opcija, mēģini vēlreiz" << endl;
+                cout << "Nepareiza opcija, mēģini vēlreiz" << endl;
                 continue;
         }
         break;
